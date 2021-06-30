@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/components/*": ["components/*"],
+      "@/styles/*": ["styles/*"],
+      "@/config/*": ["config/*"]
+    }
+  }
+}
+// @/components/* - Means anything inside the components folder
+// The `["components/*"]` value is now attached to the "@/components/*" key.
+// With that, we can now access any of the components with @/components/*
+// no matter which file we are on. So no need to do shit like "../../../components"
+
+///// NOTE: When creating or adding changes to this file, dev server must be reset
