@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import Link from "next/dist/client/link";
 import Image from "next/dist/client/image";
 import { FaPencilAlt, FaTimes } from "react-icons/fa";
@@ -5,9 +6,27 @@ import Layout from "@/components/Layout";
 import { API_URL } from "@/config/index";
 import styles from "@/styles/event.module.css";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const EventPage = ({ evt }) => {
-  const deleteEvent = () => {
-    console.log("delete");
+  const router = useRouter();
+
+  const deleteEvent = async (e) => {
+    // confirm() is a method that fires a popup window and asks us if the user is sure
+    if (confirm("Are you sure?")) {
+      const res = await fetch(`${API_URL}/events/${evt.slug}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.error(data.message);
+      } else {
+        router.push("/events");
+      }
+    }
   };
 
   return (
@@ -28,6 +47,7 @@ const EventPage = ({ evt }) => {
           {new Date(evt.date).toLocaleDateString("en-US")} at {evt.time}
         </span>
         <h1>{evt.name}</h1>
+        <ToastContainer />
         {evt.image && (
           <div className={styles.image}>
             <Image
@@ -55,8 +75,8 @@ const EventPage = ({ evt }) => {
 
 ////// Code below pre-renders at build time
 // GetStaticPaths is necessary for dynamic pages.
-export const getStaticProps = async ({ params: { id } }) => {
-  const res = await fetch(`${API_URL}/events?slug=${id}`);
+export const getStaticProps = async ({ params: { slug } }) => {
+  const res = await fetch(`${API_URL}/events?slug=${slug}`);
 
   const events = await res.json();
 
@@ -68,7 +88,7 @@ export const getStaticPaths = async () => {
   const events = await res.json();
 
   const paths = events.map((evt) => ({
-    params: { id: evt.slug },
+    params: { slug: evt.slug },
   }));
 
   // must return an object that has an array of paths that are dynamically generated.
@@ -81,8 +101,8 @@ export const getStaticPaths = async () => {
 
 ////// Code below is pre-rendering for every request.
 // // The argument is "context" which gives us access to many things like the query
-// export const getServerSideProps = async ({ query: { id } }) => {
-//   const res = await fetch(`${API_URL}/api/events/${id}`);
+// export const getServerSideProps = async ({ query: { slug } }) => {
+//   const res = await fetch(`${API_URL}/api/events/${slug}`);
 
 //   const events = await res.json();
 
