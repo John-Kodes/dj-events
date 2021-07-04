@@ -33,7 +33,6 @@ const Modal = ({ show, onClose, children, title }) => {
       document.getElementById("modal-root")
     );
   } else {
-    console.log("error");
     return null;
   }
 };

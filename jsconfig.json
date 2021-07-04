@@ -4,10 +4,12 @@
     "paths": {
       "@/components/*": ["components/*"],
       "@/styles/*": ["styles/*"],
-      "@/config/*": ["config/*"]
+      "@/config/*": ["config/*"],
+      "@/context/*": ["context/*"]
     }
   }
 }
+
 // @/components/* - Means anything inside the components folder
 // The `["components/*"]` value is now attached to the "@/components/*" key.
 // With that, we can now access any of the components with @/components/*

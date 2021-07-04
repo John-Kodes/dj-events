@@ -74,7 +74,6 @@ const EditEventPage = ({ evt }) => {
 
     setImagePreview(data.image.formats.thumbnail.url);
     setShowModal(false);
-    console.log("uploaded and closing modal");
   };
 
   return (
@@ -185,9 +184,12 @@ const EditEventPage = ({ evt }) => {
   );
 };
 
-export const getServerSideProps = async ({ params: { id } }) => {
+// req is where the cookie is located
+export const getServerSideProps = async ({ params: { id }, req }) => {
   const res = await fetch(`${API_URL}/events/${id}`);
   const evt = await res.json();
+
+  console.log(req.headers.cookie);
 
   return {
     props: {
