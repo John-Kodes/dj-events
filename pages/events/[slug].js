@@ -12,37 +12,9 @@ import "react-toastify/dist/ReactToastify.css";
 const EventPage = ({ evt }) => {
   const router = useRouter();
 
-  const deleteEvent = async (e) => {
-    // confirm() is a method that fires a popup window and asks us if the user is sure
-    if (confirm("Are you sure?")) {
-      const res = await fetch(`${API_URL}/events/${evt.slug}`, {
-        method: "DELETE",
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        toast.error(data.message);
-      } else {
-        router.push("/events");
-      }
-    }
-  };
-
   return (
     <Layout>
       <div className={styles.event}>
-        <div className={styles.controls}>
-          <Link href={`/events/edit/${evt.id}`}>
-            <a>
-              <FaPencilAlt /> Edit Event
-            </a>
-          </Link>
-          <a href="#" className={styles.delete} onClick={deleteEvent}>
-            <FaTimes /> Delete Event
-          </a>
-        </div>
-
         <span>
           {new Date(evt.date).toLocaleDateString("en-US")} at {evt.time}
         </span>
@@ -73,40 +45,40 @@ const EventPage = ({ evt }) => {
   );
 };
 
-////// Code below pre-renders at build time
-// GetStaticPaths is necessary for dynamic pages.
-export const getStaticProps = async ({ params: { slug } }) => {
+// ////// Code below pre-renders at build time
+// // GetStaticPaths is necessary for dynamic pages.
+// export const getStaticProps = async ({ params: { slug } }) => {
+//   const res = await fetch(`${API_URL}/events?slug=${slug}`);
+
+//   const events = await res.json();
+
+//   return { props: { evt: events[0] }, revalidate: 1 };
+// };
+
+// export const getStaticPaths = async () => {
+//   const res = await fetch(`${API_URL}/events`);
+//   const events = await res.json();
+
+//   const paths = events.map((evt) => ({
+//     params: { slug: evt.slug },
+//   }));
+
+//   // must return an object that has an array of paths that are dynamically generated.
+//   return {
+//     paths,
+//     fallback: false,
+//     // fallback: If false, it will show a 404 if the resource or path is not found. Normally used for static websites. If you want it to look for a path even if it doesn't generate at build time and to make a new request, set it to true
+//   };
+// };
+
+////// Code below is pre-rendering for every request.
+// The argument is "context" which gives us access to many things like the query
+export const getServerSideProps = async ({ query: { slug } }) => {
   const res = await fetch(`${API_URL}/events?slug=${slug}`);
 
   const events = await res.json();
 
-  return { props: { evt: events[0] }, revalidate: 1 };
+  return { props: { evt: events[0] } };
 };
-
-export const getStaticPaths = async () => {
-  const res = await fetch(`${API_URL}/events`);
-  const events = await res.json();
-
-  const paths = events.map((evt) => ({
-    params: { slug: evt.slug },
-  }));
-
-  // must return an object that has an array of paths that are dynamically generated.
-  return {
-    paths,
-    fallback: false,
-    // fallback: If false, it will show a 404 if the resource or path is not found. Normally used for static websites. If you want it to look for a path even if it doesn't generate at build time and to make a new request, set it to true
-  };
-};
-
-////// Code below is pre-rendering for every request.
-// // The argument is "context" which gives us access to many things like the query
-// export const getServerSideProps = async ({ query: { slug } }) => {
-//   const res = await fetch(`${API_URL}/api/events/${slug}`);
-
-//   const events = await res.json();
-
-//   return { props: { evt: events[0] } };
-// };
 
 export default EventPage;

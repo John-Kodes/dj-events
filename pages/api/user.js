@@ -4,15 +4,16 @@ import { API_URL } from "@/config/index";
 // This is where we actually login our user with Strapi, where we fetch our token.
 export default async (req, res) => {
   if (req.method === "GET") {
-    if (!req.header.cookie) {
-      return res.status(403).json({ message: "Not Authorized" });
+    if (!req.headers.cookie) {
+      res.status(403).json({ message: "Not Authorized" });
+      return;
     }
 
     // extracting the token by using the npm package cookie and parsing the header's cookie from the request
     const { token } = cookie.parse(req.headers.cookie);
 
     // Sending the token to Strapi
-    const strapiRes = await fetch(`${API_URL}/user/me`, {
+    const strapiRes = await fetch(`${API_URL}/users/me`, {
       method: "GET",
       // Sending the token
       headers: {

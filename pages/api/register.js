@@ -4,7 +4,7 @@ import { API_URL } from "@/config/index";
 // This is where we actually login our user with Strapi, where we fetch our token.
 export default async (req, res) => {
   if (req.method === "POST") {
-    const { username, email, password } = req.body.user;
+    const { username, email, password } = req.body;
 
     const strapiRes = await fetch(`${API_URL}/auth/local/register`, {
       method: "POST",

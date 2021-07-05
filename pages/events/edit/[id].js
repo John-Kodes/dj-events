@@ -15,8 +15,9 @@ import styles from "@/styles/Form.module.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import moment from "moment";
+import { parseCookies } from "@/helpers/index";
 
-const EditEventPage = ({ evt }) => {
+const EditEventPage = ({ evt, token }) => {
   const router = useRouter();
 
   const [values, setValues] = useState({
@@ -50,11 +51,16 @@ const EditEventPage = ({ evt }) => {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(values),
     });
 
     if (!res.ok) {
+      if (res.status === 403 || res.status === 401) {
+        toast.error("Unauthorized");
+        return;
+      }
       toast.error("Something Went Wrong");
     } else {
       // If event succesfully created, it will redirect us to the event page
@@ -178,7 +184,11 @@ const EditEventPage = ({ evt }) => {
         </button>
       </div>
       <Modal show={showModal} onClose={() => setShowModal(false)}>
-        <ImageUpload evtId={evt.id} imageUploaded={imageUploaded} />
+        <ImageUpload
+          evtId={evt.id}
+          imageUploaded={imageUploaded}
+          token={token}
+        />
       </Modal>
     </Layout>
   );
@@ -189,11 +199,12 @@ export const getServerSideProps = async ({ params: { id }, req }) => {
   const res = await fetch(`${API_URL}/events/${id}`);
   const evt = await res.json();
 
-  console.log(req.headers.cookie);
+  const { token } = parseCookies(req);
 
   return {
     props: {
       evt,
+      token,
     },
   };
 };
