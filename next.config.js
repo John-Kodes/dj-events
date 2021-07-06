@@ -3,13 +3,9 @@ module.exports = {
   images: {
     domains: ["res.cloudinary.com"],
   },
-  // serverRuntimeConfig: {
-  //   // Will only be available on the server side
-  //   mySecret: "secret",
-  //   secondSecret: process.env.SECOND_SECRET, // Pass through env variables
-  // },
-  // publicRuntimeConfig: {
-  //   // Will be available on both server and client
-  //   staticFolder: "/static",
-  // },
+  eslint: {
+    // Warning: Dangerously allow production builds to successfully complete even if
+    // your project has ESLint errors.
+    ignoreDuringBuilds: true,
+  },
 };
